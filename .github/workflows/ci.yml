@@ -63,16 +63,15 @@ jobs:
       - name: Send email with test report
         uses: dawidd6/action-send-mail@v3
         with:
-          server_address: ${{ secrets.SMTP_SERVER }}
-          server_port: ${{ secrets.SMTP_PORT }}
-          username: ${{ secrets.SMTP_USERNAME }}
-          password: ${{ secrets.SMTP_PASSWORD }}
+          server_address: smtp@gmail.com
+          server_port: 465
+ 
 
           subject: >
             [${{ needs.test.result }}] ${{ github.repository }}
 
           from: ouelhazifir@gmail.com
-          to: azee@gmail.com
+          to: a@gmail.com
   
 
           body: |
