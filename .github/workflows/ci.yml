@@ -46,3 +46,39 @@ jobs:
         run: |
           ENV=${{ github.event.inputs.env || 'staging' }}
           echo "Deploying application to $ENV..."
+  notify:
+    runs-on: ubuntu-latest
+    needs: test
+    if: always()   # s’exécute même si les tests échouent
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Download test reports
+        uses: actions/download-artifact@v5
+        with:
+          name: test-reports
+          path: reports
+
+      - name: Send email with test report
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_SERVER }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+
+          subject: >
+            [${{ needs.test.result }}] ${{ github.repository }}
+
+          from: ouelhazifir@gmail.com
+          to: azee@gmail.com
+  
+
+          body: |
+            Repository: ${{ github.repository }}
+            Job status: ${{ needs.test.result }}
+            Commit SHA: ${{ github.sha }}
+
+          attachments: reports/test-results.xml
+
